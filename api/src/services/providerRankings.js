@@ -1,21 +1,9 @@
 const geolib = require('geolib');
 const lodash = require('lodash');
 const differenceInBusinessDays = require('date-fns/differenceInBusinessDays')
-const { getProviders } = require("../repos/providers");
-const { getCompletedJobs } = require("../repos/jobs");
-
-const tempJob = {
-    "id": "27",
-    "datetime": "2021-07-22 12:09:57",
-    "status": "SCHEDULED",
-    "provider_id": "",
-    "avg_cost_per_page": "",
-    "materials_turned_in_at": "",
-    "provider_rating": "",
-    "location_type": "LOCATION_BASED",
-    "latitude": "34.057388",
-    "longitude": "-118.248034"
-};
+const { getProviders } = require("../repos/providers.js");
+const { getCompletedJobs, getJobById } = require("../repos/job.js");
+const logError = require('../../util/logError.js');
 
 const getLocationRank = ({ job, providers }) => {
     if (job.location_type === 'REMOTE') {
@@ -52,18 +40,25 @@ const getCostRank = ({ completedJobs }) => {
     return ranked;
 }
 
-async function rankProvidersByJob({ job = tempJob }) {
+async function rankProvidersByJob({ jobId }) {
     try {
-        const providers = await getProviders();
+        const [
+            job,
+            providers,
+            completedJobs,
+        ] = await Promise.all([
+            getJobById(jobId),
+            getProviders(),
+            getCompletedJobs(),
+        ]);
         // TODO move this stat stuff out
-        const completedJobs = await getCompletedJobs();
         const locationRanked = getLocationRank({ job, providers });
         const speedRanked = getSpeedRank({ completedJobs });
         const costRanked = getCostRank({ completedJobs });
 
         // TODO solve weight
         const rankedProviders = providers;
-        return {rankedProviders, completedJobs, locationRanked, speedRanked, costRanked};
+        return { job, rankedProviders, completedJobs, locationRanked, speedRanked, costRanked };
     } catch (error) {
         logError('error fetching upcoming jobs', error);
         throw error;
