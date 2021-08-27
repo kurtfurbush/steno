@@ -1,0 +1,20 @@
+networks:
+  steno-network:
+
+services:
+    ui:
+        image: steno-ui
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        links:
+            - api
+        networks:
+            - steno-network
+    api:
+        image: steno-api
+        restart: unless-stopped
+        ports:
+            - "5000:5000"
+        networks:
+            - steno-network

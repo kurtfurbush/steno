@@ -1,0 +1,25 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background-color: white;
+  color: #222;
+}
+
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.App-header h1 {
+  word-wrap: break-word;
+  font-size: calc(1.8rem + 1vmin);
+  color: #999,
+}
+
+.weather-content {  
+  min-width: 40rem;
+  max-width: 80rem;
+  margin: auto;
+}
