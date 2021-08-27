@@ -11,7 +11,7 @@ import './style.css';
 
 const WeatherCache = {};
 
-export default function WeatherList({ loading }) {
+export default function JobList({ loading }) {
     // There are various strategies for data management. When first starting out a small app (even with growth potential),
     // I wouldn't introduce something as overhead-heavy as Redux right away, since features and general app structure can quickly change.
     // Once it gets to the point of a better view of shared data needs, then Redux and Redux-Saga comes in handy.

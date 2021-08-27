@@ -1,4 +1,4 @@
-import WeatherList from './components/WeatherList';
+import JobList from './components/JobList';
 import './App.css';
 
 function App() {
@@ -6,11 +6,11 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>
-          Welcome to FunWeather!
+          Welcome to Steno!
         </h1>
       </header>
-      <main className="weather-content">
-        <WeatherList />
+      <main className="main-content">
+        <JobList />
       </main>
     </div>
   );
