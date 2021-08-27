@@ -1,13 +1,11 @@
-import express, { json } from 'express';
-import morgan from 'morgan';
-import helmet from 'helmet';
-import cors from 'cors';
-import { createRequire } from 'module';
+const express =  require('express');
+const { json } =  require('express');
+const morgan =  require('morgan');
+const helmet =  require('helmet');
+const cors =  require('cors');
+const { notFound, errorHandler } =  require('./middlewares.js');
+const api =  require('./api/index.js');
 
-import { notFound, errorHandler } from './middlewares.js';
-import api from './api/index.js';
-
-const require = createRequire(import.meta.url);
 require('dotenv').config();
 
 const app = express();
@@ -28,4 +26,4 @@ app.use('/api/v1', api);
 app.use(notFound);
 app.use(errorHandler);
 
-export default app;
+module.exports = app;

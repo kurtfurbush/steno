@@ -1,6 +1,5 @@
-import request from 'supertest';
-
-import app from '../src/app.js';
+const request =  require('supertest');
+const app =  require('../src/app.js');
 
 describe('GET /api/v1', () => {
   it('responds with a json message', (done) => {
@@ -14,10 +13,10 @@ describe('GET /api/v1', () => {
   });
 });
 
-describe('GET /api/v1/weather', () => {
+describe('GET /api/v1/jobs', () => {
   it('responds with a json message', (done) => {
     request(app)
-      .get('/api/v1/weather')
+      .get('/api/v1/jobs')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(404, {
@@ -26,22 +25,10 @@ describe('GET /api/v1/weather', () => {
   });
 });
 
-describe('GET /api/v1/weather/32223', () => {
+describe('GET /api/v1/jobs/upcoming', () => {
   it('responds with a json message', (done) => {
     request(app)
-      .get('/api/v1/weather/32223')
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(404, {
-        message: 'Not Found'
-      }, done);
-  });
-});
-
-describe('GET /api/v1/weather/daily/32223', () => {
-  it('responds with a json message', (done) => {
-    request(app)
-      .get('/api/v1/weather/daily/32223')
+      .get('/api/v1/jobs/upcoming')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200, done);

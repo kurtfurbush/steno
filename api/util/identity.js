@@ -1,3 +1,5 @@
-export default function identity(thing) {
+function identity(thing) {
   return thing;
 }
+
+module.exports =  identity;

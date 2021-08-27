@@ -1,15 +1,13 @@
-import logError from '../util/logError.js';
+const logError =  require('../util/logError.js');
 
-export function notFound(req, res, next) {
+function notFound(req, res, next) {
   res.status(404);
   const error = new Error('Not Found');
   logError(error, req.originalUrl);
   next(error);
 }
 
-/* eslint-disable no-unused-vars */
-export function errorHandler(err, req, res, next) {
-  /* eslint-enable no-unused-vars */
+function errorHandler(err, req, res, next) {
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
   logError(err);
   res.status(statusCode);
@@ -17,3 +15,8 @@ export function errorHandler(err, req, res, next) {
     message: err.message,
   });
 }
+
+module.exports = {
+  notFound,
+  errorHandler
+};
