@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import weather from './weather.js';
+import jobs from './jobs.js';
 
 const router = Router();
 
@@ -10,6 +10,6 @@ router.get('/', (_, res) => {
   });
 });
 
-router.use('/weather', weather);
+router.use('/jobs', jobs);
 
 export default router;
