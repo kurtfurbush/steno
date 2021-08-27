@@ -12,9 +12,12 @@
   "dependencies": {
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
+    "date-fns": "^2.23.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "geolib": "^3.3.1",
     "helmet": "^4.6.0",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.1"
   },
