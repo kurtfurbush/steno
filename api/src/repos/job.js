@@ -25,6 +25,18 @@ async function getUpcomingJobs() {
   }
 }
 
+async function getCompletedJobs() {
+  try {
+    const jobs = await getJobs();
+    const completedJobs = jobs.filter(job => job.status === 'COMPLETE'); // Would support filtering in DB query
+    return completedJobs;
+  } catch (error) {
+    logError('error fetching completed jobs', error);
+    throw error;
+  }
+}
+
 module.exports = {
-  getUpcomingJobs
+  getUpcomingJobs,
+  getCompletedJobs,
 };

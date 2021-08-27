@@ -2,8 +2,7 @@ const geolib = require('geolib');
 const lodash = require('lodash');
 const differenceInBusinessDays = require('date-fns/differenceInBusinessDays')
 const { getProviders } = require("../repos/providers");
-
-const average = (array) => array.reduce((a, b) => a + b) / array.length;
+const { getCompletedJobs } = require("../repos/jobs");
 
 const tempJob = {
     "id": "27",
@@ -23,7 +22,6 @@ const getLocationRank = ({ job, providers }) => {
         return null;
     }
 
-    // TODO solve weight
     const ranked = geolib.orderByDistance(job, providers);
     return ranked;
 }
@@ -57,9 +55,15 @@ const getCostRank = ({ completedJobs }) => {
 async function rankProvidersByJob({ job = tempJob }) {
     try {
         const providers = await getProviders();
+        // TODO move this stat stuff out
+        const completedJobs = await getCompletedJobs();
+        const locationRanked = getLocationRank({ job, providers });
+        const speedRanked = getSpeedRank({ completedJobs });
+        const costRanked = getCostRank({ completedJobs });
 
+        // TODO solve weight
         const rankedProviders = providers;
-        return rankedProviders;
+        return {rankedProviders, completedJobs, locationRanked, speedRanked, costRanked};
     } catch (error) {
         logError('error fetching upcoming jobs', error);
         throw error;
