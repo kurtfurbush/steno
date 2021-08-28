@@ -6,6 +6,8 @@ const { getProviders } = require('../repos/providers.js');
 const { getCompletedJobs, getJobById } = require('../repos/job.js');
 const logError = require('../../util/logError.js');
 
+// Would DRY this up with more time
+
 const sum = (array = []) => array.reduce((a, b) => a + b, 0);
 const average = (array = []) => sum(array) / array.length;
 
@@ -32,7 +34,6 @@ const getLocationRank = ({ job, providers }) => {
 
 // Refactor these to more efficient processing
 const getRatingAverageRanked = ({ completedJobs }) => {
-  // Also want to add weight for volume
   const stats = completedJobs.reduce((prev, { provider_id, provider_rating = '' }) => {
     if (provider_rating !== '') {
       prev[provider_id] = [
@@ -49,7 +50,6 @@ const getRatingAverageRanked = ({ completedJobs }) => {
 };
 
 const getRatingCountRanked = ({ completedJobs }) => {
-  // Also want to add weight for volume
   const stats = completedJobs.reduce((prev, { provider_id, provider_rating = '' }) => {
     if (provider_rating !== '') {
       prev[provider_id] = (prev[provider_id] || 0) + 1;
@@ -150,15 +150,14 @@ async function rankProvidersByJob(jobId) {
       const ratingCountRankEntry = transformedRatingCountRanked[+provider.id];
       const speedRankEntry = transformedSpeedRanked[+provider.id];
       const costRankEntry = transformedCostRanked[+provider.id];
-      // TODO handle bad numbers
-      // TODO handle no location (30km arbitrary for now) // if this defaults to 0, should be fine for "remote" cases
-      // TODO handle N/A numbers //  give average rank?
+      // TODO handle bad numbers better
+      // TODO handle no location (30km penalty arbitrary for now) // if this defaults to 0, should be fine for "remote" cases
       const fullRanking = costRankEntry
         ? ((locationRankEntry?.distance || 30) * DistanceWeight)
-                + ((ratingAverageRankEntry?.averageRating || 0) * RatingAverageWeight)
-                + ((ratingCountRankEntry?.ratingCount || 0) * RatingCountWeight)
-                + ((speedRankEntry?.rank || providerCount) * SpeedWeight)
-                + ((costRankEntry?.rank || providerCount) * CostWeight)
+            + ((ratingAverageRankEntry?.averageRating || 0) * RatingAverageWeight)
+            + ((ratingCountRankEntry?.ratingCount || 0) * RatingCountWeight)
+            + ((speedRankEntry?.rank || providerCount) * SpeedWeight)
+            + ((costRankEntry?.rank || providerCount) * CostWeight)
         : null;
       return {
         id: provider.id,

@@ -1,6 +1,6 @@
-const router = require('express').Router(); 
+const router = require('express').Router();
 const logError = require('../../util/logError.js');
-const { getUpcomingJobs } =  require('../repos/job.js');
+const { getUpcomingJobs } = require('../repos/job.js');
 const { rankProvidersByJob } = require('../services/providerRankings.js');
 
 router.get('/upcoming', async (req, res) => {
@@ -26,7 +26,4 @@ router.get('/suggestedProviders', async (req, res) => {
   }
 });
 
-module.exports =  router;
-
-
-// TODO suggested providers route (lookup job by id)
+module.exports = router;
