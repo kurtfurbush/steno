@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 const geolib = require('geolib');
-const lodash = require('lodash');
+const sortBy = require('lodash/sortBy');
 const differenceInBusinessDays = require('date-fns/differenceInBusinessDays');
 const { getProviders } = require('../repos/providers.js');
 const { getCompletedJobs, getJobById } = require('../repos/job.js');
@@ -28,7 +28,7 @@ const getLocationRank = ({ job, providers }) => {
       ? (geolib.getDistance(provider, job) ?? 0) / 1000
       : null,
   }));
-  const ranked = lodash.sortBy(distances, 'distance');
+  const ranked = sortBy(distances, 'distance');
   return ranked;
 };
 
@@ -45,7 +45,7 @@ const getRatingAverageRanked = ({ completedJobs }) => {
   }, {});
 
   const averages = Object.entries(stats).map(([provider_id, ratings]) => ({ provider_id, averageRating: average(ratings) }));
-  const ranked = lodash.sortBy(averages, 'averageRating').reverse();
+  const ranked = sortBy(averages, 'averageRating').reverse();
   return ranked;
 };
 
@@ -58,7 +58,7 @@ const getRatingCountRanked = ({ completedJobs }) => {
   }, {});
 
   const count = Object.entries(stats).map(([provider_id, ratingCount]) => ({ provider_id, ratingCount }));
-  const ranked = lodash.sortBy(count, 'ratingCount').reverse();
+  const ranked = sortBy(count, 'ratingCount').reverse();
   return ranked;
 };
 
@@ -72,7 +72,7 @@ const getSpeedRank = ({ completedJobs }) => {
   }, {});
 
   const averages = Object.entries(stats).map(([provider_id, times]) => ({ provider_id, averageTime: average(times) }));
-  const ranked = lodash.sortBy(averages, 'averageTime');
+  const ranked = sortBy(averages, 'averageTime');
   return ranked;
 };
 
@@ -86,7 +86,7 @@ const getCostRank = ({ completedJobs }) => {
   }, {});
 
   const averages = Object.entries(stats).map(([provider_id, cost]) => ({ provider_id, averageCost: average(cost) }));
-  const ranked = lodash.sortBy(averages, 'averageCost');
+  const ranked = sortBy(averages, 'averageCost');
   return ranked;
 };
 
@@ -170,7 +170,7 @@ async function rankProvidersByJob(jobId) {
         averageCost: costRankEntry?.averageCost,
       };
     });
-    return lodash.sortBy(rankedProviders, 'fullRanking');
+    return sortBy(rankedProviders, 'fullRanking');
   } catch (error) {
     logError('error fetching upcoming jobs', error);
     throw error;

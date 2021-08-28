@@ -37,17 +37,6 @@
   user-select: none;
 }
 
-.job-main-row__weather-icon {
-  height: 4rem;
-  width: 4rem;
-  margin-right: 1rem;
-}
-
-.job-main-row__weather-icon > img {
-  height: 100%;
-  width: 100%;
-}
-
 .job-main-row-content-container {
   flex: 1;
   display: flex;
@@ -66,8 +55,8 @@
 }
 
 .job-main-row-content-temperatures {
-  width: 3rem;
   text-align: left;
+  margin-right: 2rem;
 }
 
 .job-main-row-content__uv {

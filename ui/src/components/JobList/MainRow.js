@@ -33,9 +33,7 @@ export default function MainRow({ job }) {
 
     // Move to date utils file / abstract potential use of date-fns, etc.
     const dayDate = new Date(job.datetime);
-    const dayLabel = dayDate.getDay() === new Date().getDay()
-        ? 'Today'
-        : dayDate.toLocaleString(navigator.language, { weekday: 'long' });
+    const dayLabel = dayDate.toLocaleString(navigator.language, { hour12: true });
 
     // Better handle a11y, this is quick and dirty
     return (      
@@ -47,11 +45,11 @@ export default function MainRow({ job }) {
                             {dayLabel}
                         </div>
                         <div className="job-main-row-content--secondary">
-                            {job.status}
+                            {job.location_type === 'REMOTE' ? 'Remote' : 'On-Site'}
                         </div>
                     </div>
-                    <div className="job-main-row-content-temperatures">
-                        stuff
+                    <div className="job-main-row-content-status">
+                        {job.status}
                     </div>
                     <div className="job-main-row-content-expand">
                         <ExpandIcon direction={expanded ? 'up' : 'down'} />

@@ -1,4 +1,5 @@
 import React from 'react';
+import sortBy from 'lodash/sortBy';
 import loadingIcon from '../../assets/cloud-loader.gif';
 import fetch from '../../util/fetch';
 import logError from '../../util/logError';
@@ -24,7 +25,7 @@ export default function JobList({ loading }) {
         const fetchUpcomingJobs = async () => {
             try {
                 const data = await fetch({ url: `http://localhost:5000/api/v1/jobs/upcoming`, transform: transformData }) ?? {};
-                setUpcomingJobs(data);
+                setUpcomingJobs(sortBy(data, 'datetime'));
             } catch(e) {
                 logError(e);
                 setError("Job data currently unavailable.")
@@ -47,7 +48,7 @@ export default function JobList({ loading }) {
 
     return (       
         <> 
-            <div className="weather-main-list">
+            <div className="job-main-list">
                 {content}
             </div>
         </>
