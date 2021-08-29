@@ -5,4 +5,4 @@ function logError(...args) {
   console.error(args);
 }
 
-module.exports =  logError;
+module.exports = logError;

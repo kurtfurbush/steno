@@ -35,6 +35,7 @@ async function getCompletedJobs() {
 async function getJobById(jobId) {
   try {
     const jobs = await getJobData();
+    // eslint-disable-next-line no-shadow
     const job = jobs.filter((job) => job.id === jobId)[0]; // Would support filtering in DB query
     return job;
   } catch (error) {

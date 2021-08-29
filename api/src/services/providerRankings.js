@@ -8,6 +8,14 @@ const logError = require('../../util/logError.js');
 
 // Would DRY this up with more time
 
+const transformRanked = (data = [], field) => data.reduce((prev, provider, index) => {
+  prev[provider.provider_id] = {
+    rank: index + 1,
+    [field]: provider[field],
+  };
+  return prev;
+}, {});
+
 const sum = (array = []) => array.reduce((a, b) => a + b, 0);
 const average = (array = []) => sum(array) / array.length;
 
@@ -16,6 +24,8 @@ const RatingCountWeight = 0.10;
 const CostWeight = 0.30;
 const SpeedWeight = 0.26;
 const DistanceWeight = 0.10;
+
+const NoDistancePenalty = 30;
 
 const getLocationRank = ({ job, providers }) => {
   if (job.location_type === 'REMOTE') {
@@ -32,7 +42,7 @@ const getLocationRank = ({ job, providers }) => {
   return ranked;
 };
 
-// Refactor these to more efficient processing
+// Refactor these to more efficient processing, just banging this out
 const getRatingAverageRanked = ({ completedJobs }) => {
   const stats = completedJobs.reduce((prev, { provider_id, provider_rating = '' }) => {
     if (provider_rating !== '') {
@@ -107,41 +117,11 @@ async function rankProvidersByJob(jobId) {
     const speedRanked = getSpeedRank({ completedJobs });
     const costRanked = getCostRank({ completedJobs });
 
-    const transformedLocationRanked = locationRanked.reduce((prev, { provider_id, distance }, index) => {
-      prev[provider_id] = {
-        rank: index + 1,
-        distance,
-      };
-      return prev;
-    }, {});
-    const transformedRatingAverageRanked = ratingAverageRanked.reduce((prev, { provider_id, averageRating }, index) => {
-      prev[provider_id] = {
-        rank: index + 1,
-        averageRating,
-      };
-      return prev;
-    }, {});
-    const transformedRatingCountRanked = ratingCountRanked.reduce((prev, { provider_id, ratingCount }, index) => {
-      prev[provider_id] = {
-        rank: index + 1,
-        ratingCount,
-      };
-      return prev;
-    }, {});
-    const transformedSpeedRanked = speedRanked.reduce((prev, { provider_id, averageTime }, index) => {
-      prev[provider_id] = {
-        rank: index + 1,
-        averageTime,
-      };
-      return prev;
-    }, {});
-    const transformedCostRanked = costRanked.reduce((prev, { provider_id, averageCost }, index) => {
-      prev[provider_id] = {
-        rank: index + 1,
-        averageCost,
-      };
-      return prev;
-    }, {});
+    const transformedLocationRanked = transformRanked(locationRanked, 'distance');
+    const transformedRatingAverageRanked = transformRanked(ratingAverageRanked, 'averageRating');
+    const transformedRatingCountRanked = transformRanked(ratingCountRanked, 'ratingCount');
+    const transformedSpeedRanked = transformRanked(speedRanked, 'averageTime');
+    const transformedCostRanked = transformRanked(costRanked, 'averageCost');
 
     const providerCount = providers.length;
     const rankedProviders = providers.map((provider) => {
@@ -150,10 +130,10 @@ async function rankProvidersByJob(jobId) {
       const ratingCountRankEntry = transformedRatingCountRanked[+provider.id];
       const speedRankEntry = transformedSpeedRanked[+provider.id];
       const costRankEntry = transformedCostRanked[+provider.id];
-      // TODO handle bad numbers better
-      // TODO handle no location (30km penalty arbitrary for now) // if this defaults to 0, should be fine for "remote" cases
+      // TODO better handle bad numbers better
+      // TODO better handle no location (30km penalty arbitrary for now)
       const fullRanking = costRankEntry
-        ? ((locationRankEntry?.distance || 30) * DistanceWeight)
+        ? ((locationRankEntry?.distance || NoDistancePenalty) * DistanceWeight)
             + ((ratingAverageRankEntry?.averageRating || 0) * RatingAverageWeight)
             + ((ratingCountRankEntry?.ratingCount || 0) * RatingCountWeight)
             + ((speedRankEntry?.rank || providerCount) * SpeedWeight)
