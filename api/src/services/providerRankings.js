@@ -8,6 +8,9 @@ const logError = require('../../util/logError.js');
 
 // Would DRY this up with more time
 
+const sum = (array = []) => array.reduce((a, b) => a + b, 0);
+const average = (array = []) => sum(array) / array.length;
+
 const transformRanked = (data = [], field) => data.reduce((prev, provider, index) => {
   prev[provider.provider_id] = {
     rank: index + 1,
@@ -16,9 +19,9 @@ const transformRanked = (data = [], field) => data.reduce((prev, provider, index
   return prev;
 }, {});
 
-const sum = (array = []) => array.reduce((a, b) => a + b, 0);
-const average = (array = []) => sum(array) / array.length;
+const getAverages = (data = [], field) => Object.entries(data).map(([provider_id, stats]) => ({ provider_id, [field]: average(stats) }));
 
+// These need to be based on market feedback for general purpose and I would let firms customize / can be dynamic on the UI
 const RatingAverageWeight = 0.24;
 const RatingCountWeight = 0.10;
 const CostWeight = 0.30;
@@ -42,7 +45,7 @@ const getLocationRank = ({ job, providers }) => {
   return ranked;
 };
 
-// Refactor these to more efficient processing, just banging this out
+// Refactor these for more efficient processing, just banging this out
 const getRatingAverageRanked = ({ completedJobs }) => {
   const stats = completedJobs.reduce((prev, { provider_id, provider_rating = '' }) => {
     if (provider_rating !== '') {
@@ -54,7 +57,7 @@ const getRatingAverageRanked = ({ completedJobs }) => {
     return prev;
   }, {});
 
-  const averages = Object.entries(stats).map(([provider_id, ratings]) => ({ provider_id, averageRating: average(ratings) }));
+  const averages = getAverages(stats, 'averageRating');
   const ranked = sortBy(averages, 'averageRating').reverse();
   return ranked;
 };
@@ -81,7 +84,7 @@ const getSpeedRank = ({ completedJobs }) => {
     return prev;
   }, {});
 
-  const averages = Object.entries(stats).map(([provider_id, times]) => ({ provider_id, averageTime: average(times) }));
+  const averages = getAverages(stats, 'averageTime');
   const ranked = sortBy(averages, 'averageTime');
   return ranked;
 };
@@ -95,7 +98,7 @@ const getCostRank = ({ completedJobs }) => {
     return prev;
   }, {});
 
-  const averages = Object.entries(stats).map(([provider_id, cost]) => ({ provider_id, averageCost: average(cost) }));
+  const averages = getAverages(stats, 'averageCost');
   const ranked = sortBy(averages, 'averageCost');
   return ranked;
 };
@@ -124,6 +127,7 @@ async function rankProvidersByJob(jobId) {
     const transformedCostRanked = transformRanked(costRanked, 'averageCost');
 
     const providerCount = providers.length;
+
     const rankedProviders = providers.map((provider) => {
       const locationRankEntry = transformedLocationRanked[+provider.id];
       const ratingAverageRankEntry = transformedRatingAverageRanked[+provider.id];
