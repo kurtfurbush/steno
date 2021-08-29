@@ -6,7 +6,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>
-          Welcome to Steno!
+          Welcome to Steno Scheduling!
         </h1>
       </header>
       <main className="main-content">

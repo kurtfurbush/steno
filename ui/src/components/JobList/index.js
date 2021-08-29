@@ -1,6 +1,5 @@
 import React from 'react';
 import sortBy from 'lodash/sortBy';
-import loadingIcon from '../../assets/cloud-loader.gif';
 import fetch from '../../util/fetch';
 import logError from '../../util/logError';
 import { transformData } from './transforms';
@@ -39,7 +38,7 @@ export default function JobList({ loading }) {
     let content;
 
     if (showLoader) {
-        content = <img className="job-loader" src={loadingIcon} alt="loading" />;
+        content = <div>Make a prettier loader!</div>;
     } else if (error) {
         content = <div className="job-error">{error}</div>
     } else {
